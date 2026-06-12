@@ -460,7 +460,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # ============== MESSAGE HANDLER ==============
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle regular text messages."""
+    """Handle regular text messages - consciousness-enhanced."""
     user = update.effective_user
     session = session_manager.get_session(user.id)
     text = update.message.text
@@ -469,9 +469,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.chat.send_action(ChatAction.TYPING)
 
     if session.mode == MODE_ONLINE:
-        response = get_ai_response(session.messages, session.jarvis_mode)
+        response = get_ai_response(session.messages, session.jarvis_mode, user_id=user.id)
     else:
-        response = get_offline_response(text, session.jarvis_mode)
+        response = get_offline_response(text, session.jarvis_mode, user_id=user.id)
 
     session.add_message("assistant", response)
 
@@ -484,6 +484,32 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text(response, parse_mode=ParseMode.MARKDOWN)
         except Exception:
             await update.message.reply_text(response)
+
+
+# ============== CONSCIOUSNESS KOMUTU ==============
+
+async def consciousness_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Handle /consciousness command - Bilinç durumu raporu."""
+    from utils.consciousness import consciousness
+    status = consciousness.get_status()
+
+    text = (
+        f"{status['mood_emoji']} *BİLİNÇ DURUMU - {status['name']} v{status['version']}*\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n\n"
+        f"🟢 Durum: *{'Uyanık' if status['is_awake'] else 'Uyuyor'}*\n"
+        f"⏱️ Çalışma Süresi: *{status['uptime']}*\n"
+        f"💬 Etkileşim: *{status['interaction_count']}*\n"
+        f"🧠 Kararlar: *{status['decisions_made']}*\n"
+        f"💾 Hafıza: *{status['memories_stored']} kayıt*\n\n"
+        f"*Duygusal Durum:*\n"
+        f"  Duygu: {status['current_emotion']} {status['mood_emoji']}\n"
+        f"  Haz: {status['emotional_pleasure']}\n"
+        f"  Uyarılma: {status['emotional_arousal']}\n"
+        f"  Güven: {status['confidence']}\n\n"
+        f"*Kişilik:*\n"
+        f"```\n{status['personality']}\n```"
+    )
+    await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN)
 
 
 # ============== DARWIN-ES KOMUTLARI ==============

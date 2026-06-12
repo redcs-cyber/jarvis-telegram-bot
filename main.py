@@ -31,6 +31,7 @@ from handlers.command_handlers import (
     darwin_command,
     strategies_command,
     dataset_command,
+    consciousness_command,
     button_callback,
     handle_message,
     handle_document,
@@ -79,6 +80,7 @@ def main():
     app.add_handler(CommandHandler("darwin", darwin_command))
     app.add_handler(CommandHandler("strategies", strategies_command))
     app.add_handler(CommandHandler("dataset", dataset_command))
+    app.add_handler(CommandHandler("consciousness", consciousness_command))
 
     # Callback query handler (inline buttons)
     app.add_handler(CallbackQueryHandler(button_callback))
